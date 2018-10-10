@@ -27,8 +27,8 @@ hs_err_pid*
 /.metadata/
 *.idea/
 .project
-.classpath
 *.iml
 mvnw*
 .mvn/
 target/*
+/target/
