@@ -100,14 +100,10 @@ public class ProductService {
 
     public Page<Product> findProductsInPLP(String categoryId, int page, String sortName, String sortValue) {
         long startTime = System.currentTimeMillis();
-        Specification<Product> spec = new Specification<Product>() {
-            @Nullable
-            @Override
-            public Predicate toPredicate(Root<Product> pRoot, CriteriaQuery<?> pCriteriaQuery, CriteriaBuilder pCriteriaBuilder) {
-                Path<Category> name = pRoot.get("category");
-                Predicate p = pCriteriaBuilder.equal(name.as(Category.class), mCategoryDao.findById(categoryId).get());
-                return p;
-            }
+        Specification<Product> spec = (Root<Product> pRoot, CriteriaQuery<?> pCriteriaQuery, CriteriaBuilder pCriteriaBuilder) -> {
+	        Path<Category> name = pRoot.get("category");
+	        Predicate p = pCriteriaBuilder.equal(name.as(Category.class), mCategoryDao.findById(categoryId).get());
+	        return p;
         };
 
         Pageable pageable = null;
@@ -134,12 +130,14 @@ public class ProductService {
     }
 
     public void addPriceAndInventory(List<Product> products) {
-        for (Product product : products) {
-            product.setPrice(getProductPrice(product.getId()));
-            product.setStock(getProductInventory(product.getId()));
-        }
+    	products.forEach(this :: setPriceAndInventory);
     }
-
+    
+    public void setPriceAndInventory(Product product) {
+    	product.setPrice(getProductPrice(product.getId()));
+        product.setStock(getProductInventory(product.getId()));
+	}
+    
     @Bean
     public RestTemplate restTemplate() {
         return mRestTemplateBuilder.build();
