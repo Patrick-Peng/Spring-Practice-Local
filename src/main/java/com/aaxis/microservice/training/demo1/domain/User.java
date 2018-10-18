@@ -1,7 +1,14 @@
 package com.aaxis.microservice.training.demo1.domain;
 
-import javax.persistence.*;
 import java.io.Serializable;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
 
 @Entity
 public class User implements Serializable {
@@ -9,7 +16,9 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    @Email(message="email format incorrect")
     private String username;
+    @Size(max=10,min=6,message="password length need to be between 6-10")
     private String password;
 
     public Long getId() {

@@ -1,9 +1,18 @@
 package com.aaxis.microservice.training.demo1.service;
 
-import com.aaxis.microservice.training.demo1.dao.CategoryDao;
-import com.aaxis.microservice.training.demo1.dao.ProductDao;
-import com.aaxis.microservice.training.demo1.domain.Category;
-import com.aaxis.microservice.training.demo1.domain.Product;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -15,13 +24,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.querydsl.QSort;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.criteria.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.aaxis.microservice.training.demo1.dao.CategoryDao;
+import com.aaxis.microservice.training.demo1.dao.ProductDao;
+import com.aaxis.microservice.training.demo1.domain.Category;
+import com.aaxis.microservice.training.demo1.domain.Product;
 
 @Service
 public class ProductService {

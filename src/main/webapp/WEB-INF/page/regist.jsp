@@ -8,7 +8,7 @@
 </head>
 <body>
 <a href="/login">SignIn</a> &nbsp;<br/>
-${errorMessage}
+<span style="color:red">${errorMessage}</span>
 <br/>
     <form action="/doRegist" name="regist" method="post">
         Regist:

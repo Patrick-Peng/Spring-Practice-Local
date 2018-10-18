@@ -3,11 +3,18 @@ package com.aaxis.microservice.training.demo1.controller;
 import com.aaxis.microservice.training.demo1.domain.User;
 import com.aaxis.microservice.training.demo1.service.UserService;
 import com.aaxis.microservice.training.demo1.util.SpringUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,13 +23,17 @@ public class UserController {
 
     @Autowired
     private UserService pUserService;
+    
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @RequestMapping("/doLogin")
-    public String login(@ModelAttribute User pUser, HttpServletRequest request){
+    public String login(@ModelAttribute User pUser, HttpServletRequest request, RedirectAttributes redirectAttributes){
+    	
         User user = ((RestUserController) SpringUtil.getBean("restUserController")).login(pUser);
         if(user == null){
-            request.setAttribute("errorMessage", "Login error");
-            return "forward:/login";
+        	logger.debug("user not exist");
+        	redirectAttributes.addFlashAttribute("errorMessage","Login error");
+            return "redirect:/login";
         }
         request.getSession().setAttribute("user", user);
         return "redirect:/index";
@@ -52,12 +63,17 @@ public class UserController {
     }
 
     @PostMapping("/doRegist")
-    public String doRegist(@ModelAttribute User user, HttpServletRequest request){
-        // validation, TODO
-
+    public String doRegist(@ModelAttribute@Validated User user,BindingResult bindingResult, HttpServletRequest request, RedirectAttributes redirectAttributes){
+    	if (bindingResult.hasErrors()) {
+        	for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                redirectAttributes.addFlashAttribute("errorMessage",fieldError.getDefaultMessage());
+                return "redirect:/regist";
+            }
+		}
         try{
             User u = ((RestUserController) SpringUtil.getBean("restUserController")).doRegist(user);
         } catch (Exception e){
+        	logger.debug("regist error",e.getMessage());
             e.printStackTrace();
             request.setAttribute("errorMessage", e.getMessage());
             return "forward:/regist";

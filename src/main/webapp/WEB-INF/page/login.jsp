@@ -8,16 +8,16 @@
 </head>
 <body>
 <a href="/regist">Regist</a> &nbsp;
-${errorMessage}
+<span style="color:red">${errorMessage}</span>
 <br/>
-    <form action="/doLogin" name="login">
+    <form action="/doLogin" name="login" method="post">
         Login:
         <br/>
         username: <input type="text" name="username">
         <br/>
         password: <input type="password" name="password">
         <br>
-        <input type="submit" name="submit"/>
+        <input type="submit"  name="submit"/>
     </form>
 </body>
 </html>
