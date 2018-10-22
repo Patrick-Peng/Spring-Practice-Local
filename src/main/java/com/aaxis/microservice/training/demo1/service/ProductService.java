@@ -14,6 +14,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -48,6 +51,8 @@ public class ProductService {
 
     @Autowired
     private RestTemplate restTemplate;
+    
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static  final int PRODUCT_BATCH_SIZE = 1000;
 
@@ -95,10 +100,6 @@ public class ProductService {
                 productist.clear();
             }
         }
-
-
-
-
         restTemplate.getForObject("http://localhost:8081/price/initData", Map.class);
         restTemplate.getForObject("http://localhost:8082/inventory/initData", Map.class);
     }
@@ -114,28 +115,48 @@ public class ProductService {
 	        Predicate p = pCriteriaBuilder.equal(name.as(Category.class), mCategoryDao.findById(categoryId).get());
 	        return p;
         };
-
         Pageable pageable = null;
-
         if (sortName != null) {
             Sort sort = new Sort("ASC".equalsIgnoreCase(sortValue) ? QSort.Direction.ASC : QSort.Direction.DESC, sortName);
             pageable = new PageRequest(page-1, 20, sort);
         } else {
             pageable = new PageRequest(page-1, 20);
         }
-
         Page<Product> pageResult = mProductDao.findAll(spec, pageable);
         addPriceAndInventory(pageResult.getContent());
         long cost = System.currentTimeMillis()-startTime;
-        System.out.println("COST_TIME:"+cost);
+        logger.debug("FindProductsByCategoryId COST_TIME:" + cost);
         return pageResult;
     }
 
     public Page<Product> searchProducts(int page, String productId, String name, String sortName, String sortValue) {
-
-        // implemente this method.
-
-        return null;
+    	long startTime = System.currentTimeMillis();
+    	Specification<Product> spec = (Root<Product> pRoot, CriteriaQuery<?> pCriteriaQuery, CriteriaBuilder pCriteriaBuilder) -> {
+    		List<Predicate> predicates = new ArrayList<>();
+    		if (StringUtils.isNotBlank(productId)) {
+                Predicate predicate = pCriteriaBuilder.like(pRoot.get("id").as(String.class), "%"+productId+"%");
+                predicates.add(predicate);
+            }
+    		if (StringUtils.isNotBlank(productId)) {
+                Predicate predicate = pCriteriaBuilder.equal(pRoot.get("name").as(String.class), "%"+name+"%");
+                predicates.add(predicate);
+            }
+    		Predicate[] predicateArr = new Predicate[predicates.size()];
+            predicateArr = predicates.toArray(predicateArr);
+	        return pCriteriaBuilder.or(predicateArr);
+        };
+        Pageable pageable = null;
+        if (sortName != null) {
+        	Sort sort = new Sort("ASC".equalsIgnoreCase(sortValue) ? QSort.Direction.ASC : QSort.Direction.DESC, sortName);
+        	pageable = new PageRequest(page-1, 20, sort);
+        } else {
+        	pageable = new PageRequest(page-1, 20);
+        }
+        long cost = System.currentTimeMillis()-startTime;
+        logger.debug("SearchProducts COST_TIME:" + cost);
+        Page<Product> pageResult = mProductDao.findAll(spec, pageable);
+        addPriceAndInventory(pageResult.getContent());
+        return pageResult;
     }
 
     public void addPriceAndInventory(List<Product> products) {
