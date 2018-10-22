@@ -1,15 +1,15 @@
 package com.aaxis.microservice.training.demo1.controller;
 
-import com.aaxis.microservice.training.demo1.domain.User;
-import com.aaxis.microservice.training.demo1.service.UserService;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import com.aaxis.microservice.training.demo1.domain.User;
+import com.aaxis.microservice.training.demo1.service.UserService;
 
 @RestController
 @RequestMapping("/rest")
@@ -19,7 +19,7 @@ public class RestUserController {
     private UserService pUserService;
 
     @RequestMapping("/doLogin")
-    public User login(@ModelAttribute User pUser){
+    public User login(@ModelAttribute@Valid User pUser){
         User user = pUserService.findUserByUserName(pUser);
         if(user == null || !user.getPassword().equals(pUser.getPassword())){
             return null;

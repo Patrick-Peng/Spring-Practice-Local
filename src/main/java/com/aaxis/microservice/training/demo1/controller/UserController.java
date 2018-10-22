@@ -1,8 +1,6 @@
 package com.aaxis.microservice.training.demo1.controller;
 
-import com.aaxis.microservice.training.demo1.domain.User;
-import com.aaxis.microservice.training.demo1.service.UserService;
-import com.aaxis.microservice.training.demo1.util.SpringUtil;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
+import com.aaxis.microservice.training.demo1.domain.User;
+import com.aaxis.microservice.training.demo1.service.UserService;
+import com.aaxis.microservice.training.demo1.util.SpringUtil;
 
 @Controller
 public class UserController {
@@ -28,7 +28,6 @@ public class UserController {
 
     @RequestMapping("/doLogin")
     public String login(@ModelAttribute User pUser, HttpServletRequest request, RedirectAttributes redirectAttributes){
-    	
         User user = ((RestUserController) SpringUtil.getBean("restUserController")).login(pUser);
         if(user == null){
         	logger.debug("user not exist");
@@ -67,14 +66,14 @@ public class UserController {
     	if (bindingResult.hasErrors()) {
         	for (FieldError fieldError : bindingResult.getFieldErrors()) {
                 redirectAttributes.addFlashAttribute("errorMessage",fieldError.getDefaultMessage());
+                logger.debug("regist failed", fieldError.getDefaultMessage());
                 return "redirect:/regist";
             }
 		}
         try{
-            User u = ((RestUserController) SpringUtil.getBean("restUserController")).doRegist(user);
+            ((RestUserController) SpringUtil.getBean("restUserController")).doRegist(user);
         } catch (Exception e){
-        	logger.debug("regist error",e.getMessage());
-            e.printStackTrace();
+        	logger.error("regist error",e);
             request.setAttribute("errorMessage", e.getMessage());
             return "forward:/regist";
         }
