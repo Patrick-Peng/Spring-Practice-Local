@@ -47,8 +47,8 @@ public class RestUserController {
             pUserService.regist(user);
             result.put("user", user);
         } catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+            logger.error("regist error" + e.getMessage());
+            result.put("errorMessage", "regist error");
         }
         return result;
     }

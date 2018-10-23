@@ -137,8 +137,8 @@ public class ProductService {
                 Predicate predicate = pCriteriaBuilder.like(pRoot.get("id").as(String.class), "%"+productId+"%");
                 predicates.add(predicate);
             }
-    		if (StringUtils.isNotBlank(productId)) {
-                Predicate predicate = pCriteriaBuilder.equal(pRoot.get("name").as(String.class), "%"+name+"%");
+    		if (StringUtils.isNotBlank(name)) {
+                Predicate predicate = pCriteriaBuilder.like(pRoot.get("name").as(String.class), "%"+name+"%");
                 predicates.add(predicate);
             }
     		Predicate[] predicateArr = new Predicate[predicates.size()];
