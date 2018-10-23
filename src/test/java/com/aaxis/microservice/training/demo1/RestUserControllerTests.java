@@ -1,5 +1,8 @@
 package com.aaxis.microservice.training.demo1;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +16,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import com.aaxis.microservice.training.demo1.domain.User;
+
+import net.minidev.json.JSONObject;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=Demo1Application.class)
@@ -29,20 +36,24 @@ public class RestUserControllerTests {
 
 	@Test
 	public void testLogin() throws Exception{
+		Map<String, String> user = new HashMap<>();
+		user.put("username", "a");
+		user.put("password", "1");
 		MvcResult mvcResult = mockMvc.perform(
 				MockMvcRequestBuilders.post("/rest/doLogin")
-						.param("username", "aa@aa.com")
-						.param("password", "a111111")
+						.contentType(MediaType.APPLICATION_JSON).content(JSONObject.toJSONString(user))
 						.accept(MediaType.APPLICATION_JSON_UTF8)).andReturn();
 		System.out.println(mvcResult.getResponse().getContentAsString());
 	}
 	
 	@Test
 	public void testRegist() throws Exception{
+		Map<String, String> user = new HashMap<>();
+		user.put("username", "aa@aa.com");
+		user.put("password", "a111111");
 		MvcResult mvcResult = mockMvc.perform(
 				MockMvcRequestBuilders.post("/rest/doRegist")
-				.param("username", "aa@aa.com")
-				.param("password", "a111111")
+				.contentType(MediaType.APPLICATION_JSON).content(JSONObject.toJSONString(user))
 				.accept(MediaType.APPLICATION_JSON_UTF8)).andReturn();
 		System.out.println(mvcResult.getResponse().getContentAsString());
 	}

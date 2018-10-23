@@ -42,7 +42,7 @@ public class ProductService {
 
     @Autowired
     private ProductDao mProductDao;
-
+    
     @Autowired
     private RestTemplateBuilder mRestTemplateBuilder;
 
@@ -107,7 +107,7 @@ public class ProductService {
     public List<Product> findProductsByCategoryId(String categoryId) {
         return mProductDao.findProductsByCategory_Id(categoryId);
     }
-
+    
     public Page<Product> findProductsInPLP(String categoryId, int page, String sortName, String sortValue) {
         long startTime = System.currentTimeMillis();
         Specification<Product> spec = (Root<Product> pRoot, CriteriaQuery<?> pCriteriaQuery, CriteriaBuilder pCriteriaBuilder) -> {

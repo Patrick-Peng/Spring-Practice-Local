@@ -6,23 +6,27 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.aaxis.microservice.training.demo1.domain.User;
-import com.aaxis.microservice.training.demo1.util.SpringUtil;
 
 @Controller
 public class UserController {
-	
+	@Autowired
+	RestTemplate restTemplate;
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @RequestMapping("/doLogin")
     public String login(@ModelAttribute User pUser, HttpServletRequest request, RedirectAttributes redirectAttributes){
-        Map<String, Object> loginResult = ((RestUserController) SpringUtil.getBean("restUserController")).login(pUser);
+    	ResponseEntity<Map> postForEntity = restTemplate.postForEntity("http://localhost:8080/rest/doLogin", pUser, Map.class);
+    	Map loginResult = postForEntity.getBody();
         if(loginResult.get("errorMessage") != null){
         	logger.debug("login error" + loginResult.get("errorMessage"));
         	redirectAttributes.addFlashAttribute("errorMessage", loginResult.get("errorMessage"));
@@ -58,7 +62,8 @@ public class UserController {
     @PostMapping("/doRegist")
     public String doRegist(@ModelAttribute User user, HttpServletRequest request, RedirectAttributes redirectAttributes){
         try{
-            Map<String, Object> registResult = ((RestUserController) SpringUtil.getBean("restUserController")).doRegist(user);
+        	ResponseEntity<Map> postForEntity = restTemplate.postForEntity("http://localhost:8080/rest/doRegist", user, Map.class);
+            Map registResult = postForEntity.getBody();
             if (registResult.get("errorMessage") != null) {
             	logger.debug("regist error" + registResult.get("errorMessage"));
 				redirectAttributes.addFlashAttribute("errorMessage",registResult.get("errorMessage"));
