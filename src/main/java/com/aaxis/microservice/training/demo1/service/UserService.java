@@ -1,10 +1,5 @@
 package com.aaxis.microservice.training.demo1.service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +28,4 @@ public class UserService {
         return user;
     }
     
-    public Map<String, Object> validateUser(User user){
-    	Map<String, Object> resultMap = new HashMap<>();
-    	Set<ConstraintViolation<User>> validateResult = validator.validate(user);
-    	for (ConstraintViolation<User> constraintViolation : validateResult) {
-			String errorMsg = constraintViolation.getMessage();
-			resultMap.put("errorMessage", errorMsg);
-			return resultMap;
-		}
-    	return resultMap;
-    }
 }
