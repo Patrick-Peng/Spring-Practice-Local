@@ -3,6 +3,7 @@ package com.aaxis.microservice.training.demo1.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -22,6 +23,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -122,10 +124,13 @@ public class ProductService {
         } else {
             pageable = new PageRequest(page-1, 20);
         }
-        Page<Product> pageResult = mProductDao.findAll(spec, pageable);
-        addPriceAndInventory(pageResult.getContent());
+        Page<String> idResult = mProductDao.findProductId(spec, pageable);
+        List<String> idList = idResult.getContent();
+        List<Product> products = mProductDao.findAllById(idList);
+        PageImpl<Product> pageResult = new PageImpl<Product>(products, pageable, idResult.getTotalElements());
         long cost = System.currentTimeMillis()-startTime;
         logger.debug("FindProductsByCategoryId COST_TIME:" + cost);
+        addPriceAndInventory(pageResult.getContent());
         return pageResult;
     }
 

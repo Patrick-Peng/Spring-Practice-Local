@@ -54,10 +54,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.boot</groupId> -->
-		<!-- <artifactId>spring-boot-starter-security</artifactId> -->
-		<!-- </dependency> -->
 	</dependencies>
 
 	<build>
@@ -65,11 +61,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<jvmArguments>
-<!-- 						-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8011 -->
-					</jvmArguments>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
